@@ -1,7 +1,10 @@
 //CRUD operations
 
-const mongodb = require('mongodb')
-const MongoClient = mongodb.MongoClient
+// const mongodb = require('mongodb')
+// const MongoClient = mongodb.MongoClient
+// const ObjectID = mongodb.ObjectID
+
+const {MongoClient, ObjectID} = require('mongodb')
 
 const connectionURL = 'mongodb://127.0.0.1:27017'
 const databaseName = 'task-manager'
@@ -12,40 +15,26 @@ MongoClient.connect(connectionURL, { useNewUrlParser: true }, (error, client) =>
     }
 
     const db = client.db(databaseName)
-   
-   
-    // db.collection('users').insertOne({
-    //     name: 'Drew',
-    //     age: 23
-    // }, (error, result) => {
-    //     if (error){
-    //         return console.log('Error inserting user')
-    //     }
 
-    //     console.log(result.ops)
+    // db.collection('users').update({
+    //     _id: new ObjectID("5e58139aec7db0236c97a40d")
+    // }, {
+    //     $inc:{
+    //         age: -1
+    //     }
+        
+    // }).then((result) => {
+    //     //good 
+    // }).catch((error) => {
+    //     //bad
     // })
 
-    db.collection('tasks').insertMany([
-        {
-            description: 'This is a description',
-            completed: true,
-        },
-        {
-            description: 'This isn\'t a description',
-            completed: false
-        },
-        {
-            description: 'This is a weenie description',
-            completed: true
-        }
-    ], (error, results) =>{
-        
-            if (error){
-            return console.log('oof')
-        }
-        console.log(results.ops)
-    })
 
-
-
+   db.collection('tasks').deleteMany({
+       completed: false
+    }).then( (result) => {
+        console.log(result.deletedCount)
+    }).catch( (error) => {
+        console.log(error)
+    }) 
 })
