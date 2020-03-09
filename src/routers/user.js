@@ -8,8 +8,8 @@ const {sendWelcomeEmail, sendGoodbyeEmail } = require('../emails/account')
 
 router.post('/users/login', async (req, res) => {
 	try{
+		//might throw exception when no user found
 		const user = await User.findByCredentials(req.body.email, req.body.password)
-		sendWelcomeEmail(user.email, user.name)
 		const token = await user.generateAuthToken()
 		res.send({user, token})
 	}
