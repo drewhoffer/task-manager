@@ -3,17 +3,17 @@ const validator = require('validator')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const Task = require('./task')
-
+const beautifyUnique = require('mongoose-beautiful-unique-validation');
 
 const userSchema = new mongoose.Schema({
 	name: {
 		type: String,
 		required: true,
-		trim: true
+		trim: true,
 	},
 	email:{
 		type: String,
-		unique: true,
+		unique: 'Not unique ({VALUE})',
 		required: true,
 		trim: true,
 		lowercase: true,
@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
 		trim: true,
 		validate(value){
 			if (value.toLowerCase().includes('password')){
-				throw new Error('Password cannot be password')
+				throw new Error('Password cannot include password!')
 			}
 		}
 	},
@@ -56,6 +56,8 @@ const userSchema = new mongoose.Schema({
 }, {
 	timestamps: true
 })
+
+userSchema.plugin(beautifyUnique);
 
 userSchema.virtual('tasks',{
 	ref: 'Task',
@@ -90,13 +92,13 @@ userSchema.methods.generateAuthToken = async function () {
 userSchema.statics.findByCredentials = async (email, password) =>{
 	const user = await User.findOne({email})
 	if (!user){
-		throw new Error('Invalid email or password')
+		throw new Error('Invalid email or password!')
 	}
 
 	const isMatch = await bcrypt.compare(password, user.password)
 
 	if (!isMatch){
-		throw new Error('Invalid email or password')
+		throw new Error('Invalid email or password!')
 	}
 
 	return user

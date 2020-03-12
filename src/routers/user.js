@@ -6,6 +6,19 @@ const multer = require('multer')
 const sharp = require('sharp')
 const {sendWelcomeEmail, sendGoodbyeEmail } = require('../emails/account')
 
+
+const path = require('path')
+//Path setting 
+//Public used for static
+//templates for handlebars
+const publicDir = path.join(__dirname, '../../public')
+
+//Setup static directory to serve
+router.use(express.static(publicDir))
+
+
+
+
 router.post('/users/login', async (req, res) => {
 	try{
 		//might throw exception when no user found
@@ -30,6 +43,7 @@ router.post('/users', async (req, res) => {
 		res.status(201).send({user, token})
 	}
 	catch(e){
+		
 		res.status(400).send(e)
 	}
 })
@@ -93,7 +107,7 @@ router.patch('/users/me', auth, async (req, res) => {
 router.delete('/users/me', auth, async(req, res) =>{
 	try{
 		await req.user.remove()
-		sendGoodbyeEmail(req.user.email, req.user.name)
+		//sendGoodbyeEmail(req.user.email, req.user.name)
 		res.send(req.user)
 	}
 	catch(e){
